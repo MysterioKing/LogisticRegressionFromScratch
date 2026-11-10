@@ -290,6 +290,45 @@ validation data:
 The test set is intentionally excluded from hyperparameter selection. It should
 be evaluated once after the final configuration has been selected.
 
+## Final test evaluation
+
+After the optimizer and regularization experiments were completed, the final
+configuration was fixed as follows:
+
+| Hyperparameter | Selected value |
+|---|---:|
+| Maximum epochs | 5,000 |
+| Learning rate | 0.03 |
+| Alpha | 0.01 |
+| L1 ratio | 0.0 (pure L2) |
+| Tolerance | $10^{-8}$ |
+
+The model reached the tolerance criterion after 2,816 iterations. Only after
+the hyperparameters had been selected using validation data was the untouched
+test split evaluated.
+
+| Metric | Train | Validation | Test |
+|---|---:|---:|---:|
+| Log loss | 0.371290 | 0.418559 | **0.393196** |
+| Accuracy | 0.841667 | 0.770000 | **0.830000** |
+| Precision | 0.841699 | 0.741573 | **0.824176** |
+| Recall | 0.801471 | 0.741573 | **0.806452** |
+| F1 | 0.821092 | 0.741573 | **0.815217** |
+
+Because the synthetic ground-truth parameters are known, parameter recovery can
+also be measured:
+
+| Parameter diagnostic |                       Value |
+|---|----------------------------:|
+| Coefficient error $\lVert\hat w-w_{\mathrm{true}}\rVert_2$ |                    0.425278 |
+| Bias error  $\hat b-b_{\mathrm{true}} $ | 0.000056 |
+
+The test metrics are better than the validation metrics in this particular
+split. This does not mean that the model improved after validation: the model
+was not retrained or changed. The difference is ordinary sampling variation
+between two sets of 200 observations. The test result is reported as the final
+independent estimate and was not used for further hyperparameter tuning.
+
 ## Optimizer experiment
 
 The optimizer experiment varied `learning_rate` and `max_epochs` while keeping
@@ -472,12 +511,10 @@ predictions = model.predict(X, threshold=0.5)
 
 Reasonable next steps are:
 
-1. add unit tests and compare predictions with scikit-learn;
-2. run the strongest configurations over multiple seeds;
-3. separate data loss and regularization penalty histories;
-4. add `decision_function` and fitted-state checks;
-5. evaluate the final configuration once on the untouched test set;
-6. move on to an equivalent implementation in PyTorch.
+1. run the strongest configurations over multiple seeds;
+2. separate data loss and regularization penalty histories;
+3. add `decision_function` and fitted-state checks;
+4. move on to an equivalent implementation in PyTorch.
 
 ## License
 
