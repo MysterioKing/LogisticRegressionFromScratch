@@ -78,7 +78,6 @@ x_test = x[validation_end:]
 y_test = y[validation_end:]
 
 
-results = []
 def main():
     model = LogisticRegressionGD(
         epochs=EPOCHS,
@@ -92,6 +91,7 @@ def main():
 
     train_metrics = evaluate(model, x_train, y_train)
     validation_metrics = evaluate(model, x_validation, y_validation)
+    test_metrics = evaluate(model, x_test, y_test)
 
     result = {
         "max_epochs": EPOCHS,
@@ -103,18 +103,23 @@ def main():
 
         "train_logloss": train_metrics["logloss"],
         "validation_logloss": validation_metrics["logloss"],
+        "test_logloss": test_metrics["logloss"],
 
         "train_accuracy": train_metrics["accuracy"],
         "validation_accuracy": validation_metrics["accuracy"],
+        "test_accuracy": test_metrics["accuracy"],
 
         "train_precision": train_metrics["precision"],
         "validation_precision": validation_metrics["precision"],
+        "test_precision": test_metrics["precision"],
 
         "train_recall": train_metrics["recall"],
         "validation_recall": validation_metrics["recall"],
+        "test_recall": test_metrics["recall"],
 
         "train_f1": train_metrics["f1"],
         "validation_f1": validation_metrics["f1"],
+        "test_f1": test_metrics["f1"],
 
         "weight_error": np.linalg.norm(
             model.coef_ - TRUE_WEIGHTS
@@ -122,29 +127,8 @@ def main():
         "bias_error": abs(model.intercept_ - TRUE_BIAS),
     }
 
-    results.append(result)
-
     return result
 
-'''results_directory = Path("results")
-results_directory.mkdir(exist_ok=True)
-
-csv_path = results_directory / "regularization_results.csv"
-
-with csv_path.open("w", newline="", encoding="utf-8") as file:
-    writer = csv.DictWriter(
-        file,
-        fieldnames=results[0].keys(),
-    )
-
-    writer.writeheader()
-    writer.writerows(results)
-
-print(f"\nResults saved to: {csv_path}")
-'''
-
-
-if __name__ == "__main__":
-    final_result = main()
-    for metric_name, metric_value in final_result.items():
-        print(f"{metric_name}: {metric_value}")
+if __name__ == '__main__':
+    result = main()
+    print(result)

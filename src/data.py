@@ -1,6 +1,6 @@
 import numpy as np
 
-from LogisticRegression import sigmoid
+from .LogisticRegression import sigmoid
 
 
 def generate_data(n_samples, true_weights, true_bias, seed):
